@@ -1,4 +1,4 @@
-from flask import Blueprint, request, Response
+from flask import Blueprint, request, Response, jsonify
 from models.settings import Settings
 from utils.proxy import ProxyHandler
 
@@ -33,28 +33,31 @@ def proxy(path):
     
     if response is None:
         return Response('Backend server error', status=500)
-    
-    #查看响应
-    # print("\n=== Response Headers ===")
-    # for key, value in response.headers.items():
-    #     print(f"{key}: {value}")
-    
-    # print("\n=== Response Content ===")
-    # print(response.content)
 
     # 检查是否是流式响应
     if response.headers.get('Content-Type') == 'text/event-stream':
-        def generate():
-            # 使用response.iter_lines()来迭代流式内容
-            for line in response.iter_lines():
-                if line:
-                    yield line + b'\n'
+        # 收集所有的响应内容
+        full_response = []
+        for line in response.iter_lines():
+            if line:
+                # 解码并添加到响应列表
+                decoded_line = line.decode('utf-8')
+                if decoded_line.startswith('data: '):
+                    try:
+                        # 提取JSON数据部分
+                        data = decoded_line[6:]  # 跳过'data: '
+                        if data != '[DONE]':
+                            full_response.append(data)
+                    except Exception as e:
+                        print(f"Error parsing line: {e}")
         
-        # 返回流式响应，保持原始响应头
+        # 返回完整的JSON响应
         return Response(
-            generate(),
-            status=response.status_code,
-            headers=dict(response.headers)
+            '\n'.join(full_response),
+            status=200,
+            headers={
+                'Content-Type': 'application/json'
+            }
         )
     
     # 返回普通响应
