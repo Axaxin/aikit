@@ -35,12 +35,12 @@ def proxy(path):
         return Response('Backend server error', status=500)
     
     #查看响应
-    print("\n=== Response Headers ===")
-    for key, value in response.headers.items():
-        print(f"{key}: {value}")
+    # print("\n=== Response Headers ===")
+    # for key, value in response.headers.items():
+    #     print(f"{key}: {value}")
     
-    print("\n=== Response Content ===")
-    print(response.content)
+    # print("\n=== Response Content ===")
+    # print(response.content)
 
     # 检查是否是流式响应
     if response.headers.get('Content-Type') == 'text/event-stream':
@@ -50,16 +50,11 @@ def proxy(path):
                 if line:
                     yield line + b'\n'
         
-        # 返回流式响应
+        # 返回流式响应，保持原始响应头
         return Response(
             generate(),
             status=response.status_code,
-            headers={
-                'Content-Type': 'text/event-stream',
-                'Cache-Control': 'no-cache',
-                'Connection': 'keep-alive',
-                'Transfer-Encoding': 'chunked'
-            }
+            headers=dict(response.headers)
         )
     
     # 返回普通响应
