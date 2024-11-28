@@ -36,34 +36,19 @@ def proxy(path):
 
     # 检查是否是流式响应
     if response.headers.get('Content-Type') == 'text/event-stream':
-        print("\n=== 开始处理流式响应 ===")
-        # 收集所有的响应内容
-        full_response = []
-        for line in response.iter_lines():
-            if line:
-                # 解码并打印每一行
-                decoded_line = line.decode('utf-8')
-                print(f"收到行: {decoded_line}")
-                if decoded_line.startswith('data: '):
-                    try:
-                        # 提取JSON数据部分
-                        data = decoded_line[6:]  # 跳过'data: '
-                        if data != '[DONE]':
-                            # 直接返回原始响应数据，不做处理
-                            full_response.append(data)
-                    except Exception as e:
-                        print(f"处理行时出错: {e}")
-                        print(f"问题行内容: {decoded_line}")
+        def generate():
+            for line in response.iter_lines():
+                if line:
+                    decoded_line = line.decode('utf-8')
+                    if decoded_line.startswith('data: '):
+                        # 保持原始的SSE格式
+                        yield f"{decoded_line}\n\n"
         
-        print(f"\n=== 收集到的完整响应 ===\n{''.join(full_response)}")
-        
-        # 直接返回收集到的原始响应
+        # 返回流式响应，保持原始响应头
         return Response(
-            ''.join(full_response),
-            status=200,
-            headers={
-                'Content-Type': 'application/json'
-            }
+            generate(),
+            status=response.status_code,
+            headers=dict(response.headers)
         )
     
     # 返回普通响应
