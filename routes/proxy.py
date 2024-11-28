@@ -39,7 +39,7 @@ def proxy(path):
         def generate():
             for chunk in response.iter_content(chunk_size=None):
                 if chunk:
-                    print(f'\n{chunk}\n')
+                    #print(f'\n{chunk}\n')
                     yield chunk
 
         return Response(
