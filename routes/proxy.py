@@ -34,6 +34,14 @@ def proxy(path):
     if response is None:
         return Response('Backend server error', status=500)
     
+    #查看响应
+    print("\n=== Response Headers ===")
+    for key, value in response.headers.items():
+        print(f"{key}: {value}")
+    
+    print("\n=== Response Content ===")
+    print(response.content)
+
     # 返回响应
     return Response(
         response.content,
