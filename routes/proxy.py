@@ -50,6 +50,7 @@ def proxy(path):
         )
         
         # 打印响应
+        print("\n=== Response ===\n")
         print(res)
 
         return res
