@@ -21,19 +21,20 @@ class ProxyHandler:
             
         # 需要移除的头部（包含客户端信息的）
         headers_to_remove = [
+            'Host',
             'Cf-Connecting-Ip',
             'Cf-Ipcountry',
             'Cf-Ray',
             'Cf-Visitor',
             'Cf-Warp-Tag-Id',
-            'X-Forwarded-For',
-            'X-Stainless-Arch',
-            'X-Stainless-Async',
-            'X-Stainless-Lang',
-            'X-Stainless-Os',
-            'X-Stainless-Package-Version',
-            'X-Stainless-Runtime',
-            'X-Stainless-Runtime-Version',
+            # 'X-Forwarded-For',
+            # 'X-Stainless-Arch',
+            # 'X-Stainless-Async',
+            # 'X-Stainless-Lang',
+            # 'X-Stainless-Os',
+            # 'X-Stainless-Package-Version',
+            # 'X-Stainless-Runtime',
+            # 'X-Stainless-Runtime-Version',
             'Cdn-Loop'
         ]
         
@@ -43,7 +44,7 @@ class ProxyHandler:
             
         # 设置新的头部
         headers.update({
-            'User-Agent': 'Python-Requests/2.31.0',  # 使用通用的User-Agent
+            # 'User-Agent': 'Python-Requests/2.31.0',  # 使用通用的User-Agent
             'Accept': 'application/json',
             'Accept-Encoding': 'gzip, deflate',
             'Connection': 'keep-alive',
