@@ -15,9 +15,9 @@ class ProxyHandler:
         headers = dict(original_request.headers)
         
         # 打印原始请求头
-        # print("\n=== Original Request Headers ===")
-        # for key, value in headers.items():
-        #     print(f"{key}: {value}")
+        print("\n=== Original Request Headers ===")
+        for key, value in headers.items():
+            print(f"{key}: {value}")
             
         # 需要移除的头部（包含客户端信息的）
         headers_to_remove = [
