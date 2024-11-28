@@ -42,7 +42,27 @@ def proxy(path):
     print("\n=== Response Content ===")
     print(response.content)
 
-    # 返回响应
+    # 检查是否是流式响应
+    if response.headers.get('Content-Type') == 'text/event-stream':
+        def generate():
+            # 使用response.iter_lines()来迭代流式内容
+            for line in response.iter_lines():
+                if line:
+                    yield line + b'\n'
+        
+        # 返回流式响应
+        return Response(
+            generate(),
+            status=response.status_code,
+            headers={
+                'Content-Type': 'text/event-stream',
+                'Cache-Control': 'no-cache',
+                'Connection': 'keep-alive',
+                'Transfer-Encoding': 'chunked'
+            }
+        )
+    
+    # 返回普通响应
     return Response(
         response.content,
         status=response.status_code,

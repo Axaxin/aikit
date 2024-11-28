@@ -91,8 +91,10 @@ class ProxyHandler:
                 url=proxy_request['url'],
                 headers=proxy_request['headers'],
                 data=proxy_request['data'],
-                params=proxy_request['params']
+                params=proxy_request['params'],
+                stream=True  # 启用流式传输
             )
             return response
         except requests.exceptions.RequestException as e:
+            print(f"Proxy request error: {e}")
             return None
