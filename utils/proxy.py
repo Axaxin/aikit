@@ -74,13 +74,13 @@ class ProxyHandler:
         # elif original_request.get_data():
         #     print("Raw Data:", original_request.get_data().decode('utf-8', errors='ignore'))
 
-        # return {
-        #     'url': target_url,
-        #     'method': original_request.method,
-        #     'headers': headers,
-        #     'data': original_request.get_data(),
-        #     'params': original_request.args
-        # }
+        return {
+            'url': target_url,
+            'method': original_request.method,
+            'headers': headers,
+            'data': original_request.get_data(),
+            'params': original_request.args
+        }
 
     @staticmethod
     def send_proxy_request(proxy_request):
