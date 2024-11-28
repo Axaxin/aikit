@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Settings - API Proxy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #eee;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="password"] {
+            width: 300px;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 0.5rem 1rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button.delete {
+            background-color: #dc3545;
+        }
+        button.delete:hover {
+            background-color: #c82333;
+        }
+        button.edit {
+            background-color: #28a745;
+        }
+        button.edit:hover {
+            background-color: #218838;
+        }
+        .flash-message {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+        }
+        .flash-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .flash-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .action-column {
+            width: 150px;
+            text-align: center;
+        }
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        .modal-content {
+            position: relative;
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            width: 500px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .button-group {
+            margin-bottom: 1rem;
+        }
+        /* 下拉菜单样式 */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 4px;
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+            border-radius: 4px;
+        }
+        .show {
+            display: block;
+        }
+        .copy-btn {
+            padding: 2px 6px;
+            margin-left: 5px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .copy-btn:hover {
+            background: #e0e0e0;
+        }
+        .generate-btn {
+            padding: 4px 8px;
+            margin-left: 5px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .generate-btn:hover {
+            background: #45a049;
+        }
+        .table td {
+            position: relative;
+        }
+        .table .copy-container {
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>API Proxy Settings</h1>
+            <div>
+                <button onclick="openModal('newBackendModal')">New Backend</button>
+                <div class="dropdown">
+                    <button class="dropbtn" onclick="toggleDropdown()">Settings &#9662;</button>
+                    <div class="dropdown-content" id="settingsDropdown">
+                        <a href="#" onclick="openModal('changePasswordModal')">Change Password</a>
+                        <a href="#" onclick="confirmReset()">Reset Password</a>
+                        <a href="{{ url_for('admin.logout') }}">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Backend List Section -->
+        <div class="section">
+            <h2>Backend List</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tag</th>
+                        <th>Address</th>
+                        <th>Auth Code</th>
+                        <th>API Key</th>
+                        <th class="action-column">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for backend in backends %}
+                    <tr>
+                        <td>{{ backend.name }}</td>
+                        <td>
+                            <div class="copy-container">
+                                <span>{{ backend.host }}{% if backend.port %}:{{ backend.port }}{% endif %}</span>
+                                <button class="copy-btn" onclick="copyToClipboard('{{ backend.host }}{% if backend.port %}:{{ backend.port }}{% endif %}')">Copy</button>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="copy-container">
+                                <span>{{ backend.auth_code }}</span>
+                                <button class="copy-btn" onclick="copyToClipboard('{{ backend.auth_code }}')">Copy</button>
+                            </div>
+                        </td>
+                        <td>{% if backend.api_key and backend.api_key != 'null' %}***{% endif %}</td>
+                        <td class="action-column">
+                            <button class="edit" onclick="editBackend('{{ backend.name }}', '{{ backend.host }}', '{{ backend.port }}', '{{ backend.auth_code }}', '{{ backend.api_key }}')">Edit</button>
+                            <button class="delete" onclick="confirmDelete('{{ backend.auth_code }}')">Delete</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 删除确认表单（隐藏） -->
+    <form id="deleteForm" method="POST" style="display: none;">
+        <input type="hidden" name="action" value="delete_backend">
+        <input type="hidden" name="auth_code" id="deleteAuthCode">
+    </form>
+
+    <!-- New Backend Modal -->
+    <div id="newBackendModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('newBackendModal')">&times;</span>
+            <h2>Add New Backend</h2>
+            <form method="POST">
+                <input type="hidden" name="action" value="add_backend">
+                <div class="form-group">
+                    <label>Tag</label>
+                    <input type="text" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label>Host</label>
+                    <input type="text" name="host" required>
+                </div>
+                <div class="form-group">
+                    <label>Port (Optional)</label>
+                    <input type="number" name="port" min="1" max="65535">
+                </div>
+                <div class="form-group">
+                    <label>Auth Code</label>
+                    <div style="display: flex; align-items: center;">
+                        <input type="text" name="auth_code" required>
+                        <button type="button" class="generate-btn" onclick="generateUUID(this)">Generate</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>API Key (Optional)</label>
+                    <input type="text" name="api_key">
+                </div>
+                <button type="submit">Add Backend</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Backend Modal -->
+    <div id="editBackendModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editBackendModal')">&times;</span>
+            <h2>Edit Backend</h2>
+            <form method="POST">
+                <input type="hidden" name="action" value="edit_backend">
+                <input type="hidden" name="old_auth_code" id="editOldAuthCode">
+                <div class="form-group">
+                    <label>Tag</label>
+                    <input type="text" name="name" id="editName" required>
+                </div>
+                <div class="form-group">
+                    <label>Host</label>
+                    <input type="text" name="host" id="editHost" required>
+                </div>
+                <div class="form-group">
+                    <label>Port (Optional)</label>
+                    <input type="number" name="port" id="editPort" min="1" max="65535">
+                </div>
+                <div class="form-group">
+                    <label>Auth Code</label>
+                    <div style="display: flex; align-items: center;">
+                        <input type="text" name="auth_code" id="editAuthCode" required>
+                        <button type="button" class="generate-btn" onclick="generateUUID(this)">Generate</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>API Key (Optional)</label>
+                    <input type="text" name="api_key" id="editApiKey">
+                </div>
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('changePasswordModal')">&times;</span>
+            <h2>Change Password</h2>
+            <form method="POST">
+                <input type="hidden" name="action" value="change_password">
+                <div class="form-group">
+                    <label>Current Password</label>
+                    <input type="password" name="old_password" required>
+                </div>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <input type="password" name="new_password" required>
+                </div>
+                <div class="form-group">
+                    <label>Confirm New Password</label>
+                    <input type="password" name="confirm_password" required>
+                </div>
+                <button type="submit">Change Password</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function generateUUID() {
+            const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+            // 找到最近的input元素并设置值
+            event.target.previousElementSibling.value = uuid;
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                // 临时显示复制成功提示
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 1000);
+            }).catch(function(err) {
+                console.error('Failed to copy text: ', err);
+            });
+        }
+
+        function confirmReset() {
+            if (confirm('Are you sure you want to reset the admin password to default? This will log you out.')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.style.display = 'none';
+                
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'action';
+                input.value = 'reset_password';
+                
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function editBackend(name, host, port, authCode, apiKey) {
+            document.getElementById('editName').value = name;
+            document.getElementById('editHost').value = host;
+            document.getElementById('editPort').value = port !== 'None' ? port : '';
+            document.getElementById('editAuthCode').value = authCode;
+            document.getElementById('editApiKey').value = apiKey !== 'null' ? apiKey : '';
+            document.getElementById('editOldAuthCode').value = authCode;
+            openModal('editBackendModal');
+        }
+
+        function confirmDelete(authCode) {
+            if (confirm('Are you sure you want to delete this backend?')) {
+                document.getElementById('deleteAuthCode').value = authCode;
+                document.getElementById('deleteForm').submit();
+            }
+        }
+
+        function toggleDropdown() {
+            document.getElementById("settingsDropdown").classList.toggle("show");
+        }
+
+        // 点击下拉菜单外部关闭下拉菜单
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+            if (event.target.className === 'modal') {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

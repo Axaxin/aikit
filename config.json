@@ -1,0 +1,33 @@
+{
+    "admin_password": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
+    "backends": [
+        {
+            "name": "groq",
+            "host": "https://api.groq.com",
+            "port": null,
+            "auth_code": "",
+            "api_key": null
+        },
+        {
+            "name": "openai",
+            "host": "https://api.openai.com",
+            "port": null,
+            "auth_code": "",
+            "api_key": null
+        },
+        {
+            "name": "xai",
+            "host": "https://api.xai.com/openai",
+            "port": null,
+            "auth_code": "",
+            "api_key": null
+        },
+        {
+            "name": "custom",
+            "host": "http://localhost",
+            "port": 11434,
+            "auth_code": "",
+            "api_key": null
+        }
+    ]
+}
