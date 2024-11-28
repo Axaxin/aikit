@@ -45,10 +45,10 @@ class ProxyHandler:
         # 设置新的头部
         headers.update({
             # 'User-Agent': 'Python-Requests/2.31.0',  # 使用通用的User-Agent
-            'Accept': 'application/json',
+            #'Accept': 'application/json',
             'Accept-Encoding': 'gzip, deflate',
             'Connection': 'keep-alive',
-            'Content-Type': 'application/json'
+            #'Content-Type': 'application/json'
         })
         
         
@@ -59,20 +59,20 @@ class ProxyHandler:
             del headers['Authorization']
 
         # 打印调试信息
-        # print("\n=== Modified Request Headers ===")
-        # for key, value in headers.items():
-        #     print(f"{key}: {value}")
+        print("\n=== Modified Request Headers ===")
+        for key, value in headers.items():
+            print(f"{key}: {value}")
         
         # print("\n=== Original Request Args ===")
         # for key, value in original_request.args.items():
         #     print(f"{key}: {value}")
         
-        # print("\n=== Original Request Form Data ===")
-        # if original_request.form:
-        #     for key, value in original_request.form.items():
-        #         print(f"{key}: {value}")
-        # elif original_request.get_data():
-        #     print("Raw Data:", original_request.get_data().decode('utf-8', errors='ignore'))
+        print("\n=== Original Request Form Data ===")
+        if original_request.form:
+            for key, value in original_request.form.items():
+                print(f"{key}: {value}")
+        elif original_request.get_data():
+            print("Raw Data:", original_request.get_data().decode('utf-8', errors='ignore'))
 
         return {
             'url': target_url,

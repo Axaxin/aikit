@@ -39,14 +39,21 @@ def proxy(path):
         def generate():
             for chunk in response.iter_content(chunk_size=None):
                 if chunk:
+                    print(chunk)
                     yield chunk
         
-        # 返回流式响应，保持原始响应头
-        return Response(
+        # 返回流式响应
+        res = Response(
             generate(),
             status=response.status_code,
             headers=dict(response.headers)
         )
+        
+        # 打印响应
+        print(res)
+
+        return res
+
     
     # 返回普通响应
     return Response(
