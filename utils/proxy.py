@@ -92,7 +92,7 @@ class ProxyHandler:
                 headers=proxy_request['headers'],
                 data=proxy_request['data'],
                 params=proxy_request['params'],
-                stream=True  # 启用流式传输
+                #stream=True  # 启用流式传输
             )
             return response
         except requests.exceptions.RequestException as e:
