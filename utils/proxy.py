@@ -59,20 +59,20 @@ class ProxyHandler:
             del headers['Authorization']
 
         # 打印调试信息
-        print("\n=== Modified Request Headers ===")
-        for key, value in headers.items():
-            print(f"{key}: {value}")
+        # print("\n=== Modified Request Headers ===")
+        # for key, value in headers.items():
+        #     print(f"{key}: {value}")
         
-        print("\n=== Original Request Args ===")
-        for key, value in original_request.args.items():
-            print(f"{key}: {value}")
+        # print("\n=== Original Request Args ===")
+        # for key, value in original_request.args.items():
+        #     print(f"{key}: {value}")
         
-        print("\n=== Original Request Form Data ===")
-        if original_request.form:
-            for key, value in original_request.form.items():
-                print(f"{key}: {value}")
-        elif original_request.get_data():
-            print("Raw Data:", original_request.get_data().decode('utf-8', errors='ignore'))
+        # print("\n=== Original Request Form Data ===")
+        # if original_request.form:
+        #     for key, value in original_request.form.items():
+        #         print(f"{key}: {value}")
+        # elif original_request.get_data():
+        #     print("Raw Data:", original_request.get_data().decode('utf-8', errors='ignore'))
 
         return {
             'url': target_url,
