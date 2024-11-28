@@ -14,10 +14,10 @@ class ProxyHandler:
         # 复制原始请求头
         headers = dict(original_request.headers)
         
-        # 打印原始请求头
-        print("\n=== Original Request Headers ===")
-        for key, value in headers.items():
-            print(f"{key}: {value}")
+        # # 打印原始请求头
+        # print("\n=== Original Request Headers ===")
+        # for key, value in headers.items():
+        #     print(f"{key}: {value}")
             
         # 需要移除的头部（包含客户端信息的）
         headers_to_remove = [
@@ -58,29 +58,29 @@ class ProxyHandler:
         elif 'Authorization' in headers:
             del headers['Authorization']
 
-        # 打印调试信息
-        print("\n=== Modified Request Headers ===")
-        for key, value in headers.items():
-            print(f"{key}: {value}")
+        # # 打印调试信息
+        # print("\n=== Modified Request Headers ===")
+        # for key, value in headers.items():
+        #     print(f"{key}: {value}")
         
         # print("\n=== Original Request Args ===")
         # for key, value in original_request.args.items():
         #     print(f"{key}: {value}")
         
-        print("\n=== Original Request Form Data ===")
-        if original_request.form:
-            for key, value in original_request.form.items():
-                print(f"{key}: {value}")
-        elif original_request.get_data():
-            print("Raw Data:", original_request.get_data().decode('utf-8', errors='ignore'))
+        # print("\n=== Original Request Form Data ===")
+        # if original_request.form:
+        #     for key, value in original_request.form.items():
+        #         print(f"{key}: {value}")
+        # elif original_request.get_data():
+        #     print("Raw Data:", original_request.get_data().decode('utf-8', errors='ignore'))
 
-        return {
-            'url': target_url,
-            'method': original_request.method,
-            'headers': headers,
-            'data': original_request.get_data(),
-            'params': original_request.args
-        }
+        # return {
+        #     'url': target_url,
+        #     'method': original_request.method,
+        #     'headers': headers,
+        #     'data': original_request.get_data(),
+        #     'params': original_request.args
+        # }
 
     @staticmethod
     def send_proxy_request(proxy_request):
