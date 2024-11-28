@@ -37,21 +37,13 @@ def proxy(path):
     # 检查是否是流式响应
     if response.headers.get('Content-Type') == 'text/event-stream':
         def generate():
-            # 收集所有的响应块
-            chunks = []
-            for line in response.iter_lines():
-                if line:
-                    decoded_line = line.decode('utf-8')
-                    if decoded_line.startswith('data: '):
-                        chunks.append(decoded_line)
-            
-            # 一次性发送所有块
-            for chunk in chunks[:-1]:  # 除了最后一块
-                yield f"{chunk}\n\n"
-            
-            # 最后一块单独处理，确保连接正确关闭
-            if chunks:
-                yield f"{chunks[-1]}\n\n"
+            try:
+                for chunk in response.iter_content(chunk_size=None):
+                    if chunk:
+                        yield chunk
+            finally:
+                # 确保响应对象被正确关闭
+                response.close()
         
         # 返回流式响应，保持原始响应头
         return Response(
