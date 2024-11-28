@@ -42,18 +42,22 @@ def proxy(path):
                     print(chunk)
                     yield chunk
         
-        # 返回流式响应
-        res = Response(
+        # # 返回流式响应
+        # res = Response(
+        #     generate(),
+        #     status=response.status_code,
+        #     headers=dict(response.headers)
+        # )
+        
+        # # 打印响应
+        # print("\n=== Response ===\n")
+        # print(res)
+
+        return Response(
             generate(),
             status=response.status_code,
             headers=dict(response.headers)
         )
-        
-        # 打印响应
-        print("\n=== Response ===\n")
-        print(res)
-
-        return res
 
     
     # 返回普通响应
