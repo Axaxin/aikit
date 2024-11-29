@@ -41,7 +41,7 @@ def proxy(path):
                 yield chunk
 
     # 检查是否是流式响应
-    if response.headers.get('Content-Type') == 'text/event-stream' or response.headers.get('Content-Type') == 'text/json':
+    if response.headers.get('Content-Type') == 'text/event-stream' or response.headers.get('Content-Type') == 'application/json':
         return Response(
             generate(),
             status=response.status_code,
