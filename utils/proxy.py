@@ -54,8 +54,8 @@ class ProxyHandler:
             del headers['Authorization']
         elif len(apikey) > 4:
             if 'mistral' in backend_config['host']:
-                del headers['Authorization']
-                headers['ApiKey'] = f"Bearer {backend_config['api_key']}"
+                # del headers['Authorization']
+                headers['Authorization'] = f"Bearer {backend_config['api_key']}"
                 target_url=target_url.replace('/openai', '', 1)
             else:
                 headers['Authorization'] = f"Bearer {backend_config['api_key']}"
