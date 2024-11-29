@@ -37,17 +37,19 @@ def proxy(path):
     def generate():
         for chunk in response.iter_content(chunk_size=None):
             if chunk:
-                #print(f'\n{chunk}\n')
                 yield chunk
 
+    # 响应类型
+    response_type = response.headers.get('Content-Type')
+
     # 检查是否是流式响应
-    if response.headers.get('Content-Type') == 'text/event-stream' or response.headers.get('Content-Type') == 'application/json':
+    if 'event-stream' in response_type or 'json' in response_type:
         return Response(
             generate(),
             status=response.status_code,
             #headers=dict(response.headers)
         )
-    elif 'html' in response.headers.get('Content-Type'):
+    elif 'html' in response_type:
         return Response(
             None,
             status=response.status_code,
