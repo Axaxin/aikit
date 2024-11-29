@@ -53,7 +53,7 @@ class ProxyHandler:
         if apikey == 'None' or apikey is None or apikey == '':
             del headers['Authorization']
         elif len(apikey) > 4:
-            if 'mistral' in backend_config['backend_name']:
+            if 'mistral' in backend_config['host']:
                 headers['ApiKey'] = f"Bearer {backend_config['api_key']}"
             else:
                 headers['Authorization'] = f"Bearer {backend_config['api_key']}"
