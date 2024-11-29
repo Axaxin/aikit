@@ -42,7 +42,7 @@ class ProxyHandler:
         for header in headers_to_remove:
             headers.pop(header, None)
             
-        # 设置新的头部
+        #  更新的头部
         headers.update({
             # 'User-Agent': 'Python-Requests/2.31.0',  # 使用通用的User-Agent
             #'Accept': 'application/json',

@@ -34,20 +34,25 @@ def proxy(path):
     if response is None:
         return Response('Backend server error', status=500)
 
-    # 检查是否是流式响应
-    if response.headers.get('Content-Type') == 'text/event-stream':
-        def generate():
-            for chunk in response.iter_content(chunk_size=None):
-                if chunk:
-                    #print(f'\n{chunk}\n')
-                    yield chunk
+    def generate():
+        for chunk in response.iter_content(chunk_size=None):
+            if chunk:
+                #print(f'\n{chunk}\n')
+                yield chunk
 
+    # 检查是否是流式响应
+    if response.headers.get('Content-Type') == 'text/event-stream' or response.headers.get('Content-Type') == 'text/json':
         return Response(
             generate(),
             status=response.status_code,
             #headers=dict(response.headers)
         )
-
+    elif 'html' in response.headers.get('Content-Type'):
+        return Response(
+            None,
+            status=response.status_code,
+            headers=dict(response.headers)
+        )
     
     # 返回普通响应
     return Response(
